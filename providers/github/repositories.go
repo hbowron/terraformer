@@ -36,7 +36,9 @@ func (g *RepositoriesGenerator) InitResources() error {
 	}
 
 	opt := &githubAPI.RepositoryListByOrgOptions{
-		ListOptions: githubAPI.ListOptions{PerPage: 100},
+		ListOptions: githubAPI.ListOptions{
+			PerPage: 100,
+		},
 	}
 	// list all repositories for the authenticated user
 	for {
@@ -46,6 +48,9 @@ func (g *RepositoriesGenerator) InitResources() error {
 			return nil
 		}
 		for _, repo := range repos {
+			if repo.Archived != nil && *repo.Archived {
+				continue
+			}
 			resource := terraformutils.NewSimpleResource(
 				repo.GetName(),
 				repo.GetName(),
@@ -55,10 +60,10 @@ func (g *RepositoriesGenerator) InitResources() error {
 			)
 			resource.SlowQueryRequired = true
 			g.Resources = append(g.Resources, resource)
-			g.Resources = append(g.Resources, g.createRepositoryWebhookResources(ctx, client, repo)...)
+			// g.Resources = append(g.Resources, g.createRepositoryWebhookResources(ctx, client, repo)...)
 			g.Resources = append(g.Resources, g.createRepositoryBranchProtectionResources(ctx, client, repo)...)
-			g.Resources = append(g.Resources, g.createRepositoryCollaboratorResources(ctx, client, repo)...)
-			g.Resources = append(g.Resources, g.createRepositoryDeployKeyResources(ctx, client, repo)...)
+			// g.Resources = append(g.Resources, g.createRepositoryCollaboratorResources(ctx, client, repo)...)
+			// g.Resources = append(g.Resources, g.createRepositoryDeployKeyResources(ctx, client, repo)...)
 		}
 
 		if resp.NextPage == 0 {

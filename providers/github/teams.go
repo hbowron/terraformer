@@ -40,7 +40,7 @@ func (g *TeamsGenerator) createTeamsResources(ctx context.Context, teams []*gith
 		)
 		resource.SlowQueryRequired = true
 		resources = append(resources, resource)
-		resources = append(resources, g.createTeamMembersResources(ctx, team, client)...)
+		// resources = append(resources, g.createTeamMembersResources(ctx, team, client)...)
 		resources = append(resources, g.createTeamRepositoriesResources(ctx, team, client)...)
 	}
 	return resources
